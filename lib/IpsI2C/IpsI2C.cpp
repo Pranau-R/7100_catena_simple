@@ -12,17 +12,42 @@ cIpsSensor::cIpsSensor()
     //default constructor
     }
 bool cIpsSensor::begin()
-{
+    {
+    //Serial.println("\nI2C Test inside begin()");
   	// if no Wire is bound, fail.
-    if (this->m_wire == nullptr)
+    /*if (this->m_wire == nullptr)
+        {
+        Serial.println("\nI2C Test inside m_wire == nullptr");
         return this->setLastError(Error::NoWire);
-
+        }
     if (this->isRunning())
+        {
+        Serial.println("\nI2C Test inside this->isRunning()");
         return true;
+        }*/
 
     this->m_wire->begin();
+
+    //Serial.println("\nI2C Test after this->m_wire->begin()");
+    /*if (this->m_state != State::Sleep)
+        return true;*/
+
+    // do a wakeup, and retry if it fails
+    /*this->m_wire->beginTransmission(std::uint8_t(this->m_address));
+    if (this->m_wire->endTransmission() != 0)
+        {
+        delay(2);
+        this->m_wire->beginTransmission(std::uint8_t(this->m_address));*/
+
+        /*if (this->m_wire->endTransmission() != 0)
+            return this->setLastError(Error::WakeupFailed);
+        }*/
+
+    //this->m_state = State::Idle;
+    //return true;
     // assume it's in idle state.
-    this->m_state = this->m_state == State::End ? State::Triggered : State::Initial;
+    this->m_state = State::Initial;
+    //this->m_state = this->m_state == State::End ? State::Triggered : State::Initial;
     return true;
     /*Serial.print("cIpsSensor begin");
     Serial.print(sda);
@@ -114,9 +139,12 @@ void cIpsSensor::read_i2c(unsigned char command, int reply_size, uint8_t res_arr
     bool checksum_pass = false;
     while (!checksum_pass)
         {
+        Wire.beginTransmission(0x4B);
+        Wire.write(command);
+        Wire.endTransmission();
         //Serial.println("\nI2C Test inside readi2c() while loop");
-        uint8_t *new_command = &command;
-        Wire.write(new_command, 8);
+        /*uint8_t *new_command = &command;
+        Wire.write(new_command, 8);*/
         //Serial.println("\nI2C Test inside readi2c() after write()");
         Wire.requestFrom(0x4B, reply_size);
         for (int n = 0; n < reply_size; n++)
