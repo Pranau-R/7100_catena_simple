@@ -11,11 +11,15 @@ cIpsSensor::cIpsSensor()
     {
     //default constructor
     }
+cIpsSensor::~cIpsSensor()
+    {
+    }
 bool cIpsSensor::begin()
     {
-    //Serial.println("\nI2C Test inside begin()");
+    Serial.println("\nI2C Test inside begin()");
+    delay(100);
   	// if no Wire is bound, fail.
-    /*if (this->m_wire == nullptr)
+    if (this->m_wire == nullptr)
         {
         Serial.println("\nI2C Test inside m_wire == nullptr");
         return this->setLastError(Error::NoWire);
@@ -24,9 +28,16 @@ bool cIpsSensor::begin()
         {
         Serial.println("\nI2C Test inside this->isRunning()");
         return true;
-        }*/
+        }
 
     this->m_wire->begin();
+    this->m_state = this->m_state == State::End ? State::Triggered : State::Initial;
+
+    return this->start();
+    /*Wire.beginTransmission(0x4B);
+    Wire.write(0x10);
+    Wire.write(0x01);
+    Wire.endTransmission();*/
 
     //Serial.println("\nI2C Test after this->m_wire->begin()");
     /*if (this->m_state != State::Sleep)
@@ -46,9 +57,9 @@ bool cIpsSensor::begin()
     //this->m_state = State::Idle;
     //return true;
     // assume it's in idle state.
-    this->m_state = State::Initial;
+    //this->m_state = State::Initial;
     //this->m_state = this->m_state == State::End ? State::Triggered : State::Initial;
-    return true;
+    //return true;
     /*Serial.print("cIpsSensor begin");
     Serial.print(sda);
     Serial.print(scl);
@@ -311,6 +322,13 @@ bool cIpsSensor::setFan(bool status)
         {
         result = this->write_i2c(0x2B, 0);
         }
+    return result;
+    }
+
+bool cIpsSensor::start()
+    {
+    bool result;
+    result = this->write_i2c(0x10, 1);
     return result;
     }
 

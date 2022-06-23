@@ -100,6 +100,7 @@ private:
 
 public:
     cIpsSensor();
+    virtual ~cIpsSensor();
     unsigned long pc_values[7] = {0, 0, 0, 0, 0, 0, 0};
     float pm_values[7] = {0, 0, 0, 0, 0, 0, 0};
     //void begin(int sda = 21, int scl = 22);
@@ -125,6 +126,7 @@ public:
     int getVref();
     int getStatus();
     bool setFan(bool);
+    bool start();
     void read_i2c(unsigned char, int, uint8_t[], bool checksum = false);
     bool write_i2c(unsigned char, unsigned char);
     uint16_t get_checksum(uint8_t *byte, int);
